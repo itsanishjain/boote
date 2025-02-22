@@ -20,7 +20,7 @@ const AlchemyAuthSessionContext = createContext<AlchemyAuthSessionContextType>(
   null!
 );
 
-const API_KEY = "KRdhdsBezoTMVajIknIxlXgBHc1Pprpw";
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
 
 export const AlchemyAuthSessionProvider = ({
   children,

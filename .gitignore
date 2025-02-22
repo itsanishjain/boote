@@ -48,3 +48,5 @@ ios/
 *.xapks
 *.xzip
 *.aab
+
+.env

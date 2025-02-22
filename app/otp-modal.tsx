@@ -20,6 +20,7 @@ export default function ModalScreen() {
 
   const handleUserOtp = useCallback(async () => {
     await verifyUserOTP(otpCode);
+    console.log("OTP verified");
   }, [otpCode]);
 
   return (
