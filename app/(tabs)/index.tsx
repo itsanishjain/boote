@@ -64,15 +64,15 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.neutral.white,
   },
   header: {
     padding: spacing.lg,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.neutral.white,
   },
   greeting: {
     ...typography.body2,
-    color: colors.grey100,
+    color: colors.primary,
   },
   userEmail: {
     ...typography.h2,
@@ -91,18 +91,18 @@ const styles = StyleSheet.create({
   },
   accountAddress: {
     ...typography.body2,
-    color: colors.onSurface,
+    color: colors.neutral.white,
   },
   section: {
     padding: spacing.lg,
   },
   sectionTitle: {
     ...typography.h2,
-    color: colors.onSurface,
+    color: colors.neutral.white,
   },
   sectionSubtitle: {
     ...typography.body2,
-    color: colors.grey100,
+    color: colors.neutral.white,
     marginTop: spacing.xs,
   },
   botList: {
