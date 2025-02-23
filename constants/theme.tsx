@@ -97,6 +97,12 @@ const typography = {
     lineHeight: 18,
     letterSpacing: -0.08,
   },
+  subtitle1: {
+    fontSize: 16,
+    fontWeight: "600" as const,
+    lineHeight: 24,
+    letterSpacing: -0.24,
+  },
 };
 
 // Spacing - Using 8-point grid system

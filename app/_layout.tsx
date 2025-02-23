@@ -48,6 +48,7 @@ export default function RootLayout() {
             headerShown: false,
           }}
         >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="sign-in" />
           <Stack.Screen
             name="otp-modal"
@@ -60,7 +61,6 @@ export default function RootLayout() {
                 Platform.OS === "android" ? "slide_from_bottom" : "default",
             }}
           />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
       </SafeAreaProvider>
