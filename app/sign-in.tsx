@@ -13,6 +13,7 @@ import {
   Pressable,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { colors, typography, spacing, borderRadius } from "@/constants/theme";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -46,7 +47,7 @@ export default function SignIn() {
   const signInDisabled = email.length < 1;
 
   return (
-    <View style={conatinerStyles({ top, bottom })}>
+    <View style={containerStyles({ top, bottom })}>
       <View style={styles.formContainer}>
         <Text style={styles.titleText}>
           {`Welcome! \nEnter Your Email to Sign In.`}
@@ -57,6 +58,7 @@ export default function SignIn() {
             value={email}
             onChangeText={(val) => setEmail(val.toLowerCase())}
             placeholder="john@doe.com"
+            placeholderTextColor={colors.neutral.text.secondary}
           />
           <Pressable onPress={onSignIn} disabled={signInDisabled}>
             {({ pressed }) => (
@@ -87,24 +89,24 @@ interface StyleProps {
   top: number;
   bottom: number;
 }
-const conatinerStyles = ({
+const containerStyles = ({
   top,
   bottom,
 }: StyleProps): StyleProp<ViewStyle> => ({
-  paddingTop: top + 10,
+  paddingTop: top + spacing.lg,
   paddingBottom: bottom,
   justifyContent: "center",
   alignItems: "center",
   flex: 1,
-  backgroundColor: "rgba(50, 50, 50, 0.2)",
+  backgroundColor: colors.neutral.background.primary,
 });
 
 const styles = StyleSheet.create({
   formContainer: {
     width: windowWidth * 0.8,
-    backgroundColor: "white",
-    borderRadius: 20,
-    shadowColor: "#585757",
+    backgroundColor: colors.neutral.background.secondary,
+    borderRadius: borderRadius.xl,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 6,
@@ -112,40 +114,44 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5.62,
     elevation: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 30,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl,
   },
 
   titleText: {
-    fontFamily: "SpaceMono",
+    ...typography.h2,
+    color: colors.neutral.text.primary,
   },
+
   textInputContainer: {
-    marginTop: 10,
+    marginTop: spacing.md,
     width: "100%",
   },
 
   textInput: {
     width: "100%",
     height: 40,
-    borderColor: "rgba(0,0,0,0.095)",
+    borderColor: colors.neutral.gray300,
     borderWidth: 1,
-    paddingHorizontal: 10,
-    backgroundColor: "rgba(0,0,0,0.025)",
-    marginBottom: 10,
-    borderRadius: 10,
+    paddingHorizontal: spacing.sm,
+    backgroundColor: colors.neutral.background.tertiary,
+    marginBottom: spacing.sm,
+    borderRadius: borderRadius.lg,
+    color: colors.neutral.text.primary,
+    ...typography.body1,
   },
 
   signInButton: {
     width: "100%",
-    padding: 15,
-    borderRadius: 10,
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgb(0, 0, 0)",
+    backgroundColor: colors.primary.main,
   },
 
   signInText: {
-    color: "white",
-    fontFamily: "SpaceMono",
+    color: colors.neutral.text.primary,
+    ...typography.subtitle1,
   },
 });
