@@ -6,30 +6,69 @@ import {
   Text,
   Pressable,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAlchemyAuthSession } from "@/context/AlchemyAuthSessionProvider";
 import { colors, typography, spacing, borderRadius } from "@/constants/theme";
+import { QUERIES } from "@/backend/queries";
 
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
 
 export default function ModalScreen() {
   const [otpCode, setOtpCode] = useState<string>("");
-  const { verifyUserOTP, authState } = useAlchemyAuthSession();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { verifyUserOTP, authState, user } = useAlchemyAuthSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (authState === "authenticated") {
-      router.push("/(tabs)");
+    if (authState === "authenticated" && user?.address) {
+      handleCreateUser(user.address);
     }
-  }, [authState]);
+  }, [authState, user]);
+
+  const handleCreateUser = async (walletAddress: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await QUERIES.user.create(walletAddress);
+
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
+      if (result.data) {
+        // Successfully created user, navigate to tabs
+        router.push("/(tabs)");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create user");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleUserOtp = useCallback(async () => {
-    await verifyUserOTP(otpCode);
-    console.log("OTP verified");
-    router.push("/(tabs)");
-  }, [otpCode]);
+    if (otpCode.length < 6) {
+      setError("Please enter a valid OTP");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await verifyUserOTP(otpCode);
+      // User creation will be handled by the useEffect when authState changes
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to verify OTP");
+      setIsLoading(false);
+    }
+  }, [otpCode, verifyUserOTP]);
 
   return (
     <View style={styles.container}>
@@ -46,14 +85,15 @@ export default function ModalScreen() {
             onChangeText={(val) => setOtpCode(val.toLowerCase())}
             placeholder="123456"
             placeholderTextColor={colors.neutral.text.secondary}
+            editable={!isLoading}
           />
-          <Pressable onPress={handleUserOtp}>
+          <Pressable onPress={handleUserOtp} disabled={isLoading}>
             {({ pressed }) => (
               <View
                 style={[
                   styles.signInButton,
                   {
-                    opacity: pressed ? 0.5 : 1,
+                    opacity: pressed || isLoading ? 0.5 : 1,
                     transform: [
                       {
                         scale: pressed ? 0.98 : 1,
@@ -62,11 +102,16 @@ export default function ModalScreen() {
                   },
                 ]}
               >
-                <Text style={styles.signInText}>Verify OTP</Text>
+                {isLoading ? (
+                  <ActivityIndicator color={colors.neutral.text.primary} />
+                ) : (
+                  <Text style={styles.signInText}>Verify OTP</Text>
+                )}
               </View>
             )}
           </Pressable>
         </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
       </View>
     </View>
   );
@@ -135,5 +180,12 @@ const styles = StyleSheet.create({
   signInText: {
     color: colors.neutral.text.primary,
     ...typography.subtitle1,
+  },
+
+  errorText: {
+    color: colors.neutral.text.error,
+    marginTop: spacing.sm,
+    textAlign: "center",
+    ...typography.caption,
   },
 });

@@ -19,6 +19,7 @@ import { Platform } from "react-native";
 import { API_URL } from "@/constants";
 import { Storage } from "expo-sqlite/kv-store";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAlchemyAuthSession } from "@/context/AlchemyAuthSessionProvider";
 
 type SettingItemProps = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -104,14 +105,46 @@ export default function SettingsScreen() {
   );
   const [pushToken, setPushToken] = useState<string | null>(null);
 
+  const { signOutUser } = useAlchemyAuthSession();
+
   const handleLogout = () => {
-    // TODO: Implement logout logic
-    console.log("Logout");
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          // TODO: Implement actual logout logic
+          await signOutUser();
+          console.log("Logging out...");
+          router.replace("/sign-in");
+        },
+      },
+    ]);
   };
 
   const handleDeleteAccount = () => {
-    // TODO: Implement account deletion logic
-    console.log("Delete account");
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete your account? This action cannot be undone.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            // TODO: Implement account deletion logic
+            console.log("Deleting account...");
+          },
+        },
+      ]
+    );
   };
 
   const handleNotificationToggle = async (value: boolean) => {
@@ -211,27 +244,91 @@ export default function SettingsScreen() {
       style={{ flex: 1, backgroundColor: colors.neutral.background.primary }}
     >
       <ScrollView style={styles.container}>
-        <SettingItem
-          icon="pencil"
-          label="Edit Bot"
-          onPress={() => {
-            /* Navigate to bot editing */
-          }}
-        />
-        <SettingItem
-          icon="color-palette"
-          label="Appearance"
-          onPress={() => {
-            /* Open appearance settings */
-          }}
-        />
-        <SettingItem
-          icon="notifications"
-          label="Notifications"
-          onPress={() => {
-            /* Open notification settings */
-          }}
-        />
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, typography.h6]}>Account</Text>
+          <SettingItem
+            icon="person"
+            label="Profile"
+            onPress={() => router.push("/profile")}
+          />
+          <SettingItem
+            icon="mail"
+            label="Email"
+            value="user@example.com"
+            onPress={() => {
+              /* Handle email settings */
+            }}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, typography.h6]}>Preferences</Text>
+          <SettingItem
+            icon="notifications"
+            label="Notifications"
+            switchValue={notificationsEnabled}
+            onSwitchChange={handleNotificationToggle}
+            showChevron={false}
+          />
+          <SettingItem
+            icon="moon"
+            label="Dark Mode"
+            switchValue={darkMode}
+            onSwitchChange={setDarkMode}
+            showChevron={false}
+          />
+          <SettingItem
+            icon="volume-high"
+            label="Sounds"
+            switchValue={soundsEnabled}
+            onSwitchChange={setSoundsEnabled}
+            showChevron={false}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, typography.h6]}>Support</Text>
+          <SettingItem
+            icon="help-circle"
+            label="Help Center"
+            onPress={() => {
+              /* Navigate to help center */
+            }}
+          />
+          <SettingItem
+            icon="document-text"
+            label="Terms of Service"
+            onPress={() => {
+              /* Show terms */
+            }}
+          />
+          <SettingItem
+            icon="shield-checkmark"
+            label="Privacy Policy"
+            onPress={() => {
+              /* Show privacy policy */
+            }}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <SettingItem
+            icon="log-out"
+            label="Logout"
+            isDestructive
+            onPress={handleLogout}
+            showChevron={false}
+          />
+          <SettingItem
+            icon="trash"
+            label="Delete Account"
+            isDestructive
+            onPress={handleDeleteAccount}
+            showChevron={false}
+          />
+        </View>
+
+        <Text style={styles.version}>Version 1.0.0</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -263,6 +360,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: colors.neutral.gray200,
+  },
+  sectionTitle: {
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
+    color: colors.neutral.text.secondary,
   },
   settingItem: {
     flexDirection: "row",

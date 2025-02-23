@@ -35,6 +35,7 @@ const colors = {
       primary: "#FFFFFF", // Pure white for primary text
       secondary: "rgba(255, 255, 255, 0.7)", // 70% white for secondary text
       disabled: "rgba(255, 255, 255, 0.38)", // 38% white for disabled state
+      error: "#FF7675", // Coral red for error text
     },
     // Grayscale for various UI elements
     gray100: "#2C2C2C",
@@ -76,6 +77,12 @@ const typography = {
     fontWeight: "600" as const,
     lineHeight: 28,
     letterSpacing: -0.1,
+  },
+  h6: {
+    fontSize: 16,
+    fontWeight: "600" as const,
+    lineHeight: 24,
+    letterSpacing: -0.24,
   },
   // Body text
   body1: {

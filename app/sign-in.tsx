@@ -29,24 +29,13 @@ export default function SignIn() {
   const [error, setError] = useState<string | null>(null);
 
   const onSignIn = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
     try {
-      const result = await QUERIES.user.create(email);
-
-      if (result.error) {
-        setError(result.error);
-        return;
-      }
-
-      if (result.data) {
-        router.replace("/(tabs)");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to sign in");
-    } finally {
-      setIsLoading(false);
+      await signInWithOTP(email);
+    } catch (e) {
+      console.error(
+        "Unable to send OTP to user. Ensure your credentials are properly set: ",
+        e
+      );
     }
   }, [email]);
 
@@ -63,8 +52,10 @@ export default function SignIn() {
   const signInDisabled = email.length < 1;
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, justifyContent: "center", padding: 16 }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.neutral.background.primary }}
+    >
+      <View style={{ flex: 1, justifyContent: "center" }}>
         {isLoading ? (
           <ActivityIndicator size="large" />
         ) : (
