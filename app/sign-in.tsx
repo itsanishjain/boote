@@ -20,7 +20,7 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const router = useRouter();
   const { top, bottom } = useSafeAreaInsets();
-  const { signInWithOTP, authState } = useAlchemyAuthSession();
+  const { signInWithOTP, authState, user } = useAlchemyAuthSession();
 
   const onSignIn = useCallback(async () => {
     try {
@@ -39,8 +39,8 @@ export default function SignIn() {
     }
   }, [authState]);
 
-  if (authState === AuthenticatingState.AUTHENTICATED) {
-    return <Redirect href={"/"} />;
+  if (user) {
+    return <Redirect href="/(tabs)" />;
   }
 
   const signInDisabled = email.length < 1;

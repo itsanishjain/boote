@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import { AlchemyAuthSessionProvider } from "@/context/AlchemyAuthSessionProvider";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Platform } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { colors, typography } from "@/constants/theme";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -22,39 +24,31 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  // Feel free to load and use whatever fonts of your choosing.
-  const [loaded, error] = useFonts({
+  const [fontsLoaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontsLoaded]);
 
-  if (!loaded) {
+  if (!fontsLoaded) {
     return null;
   }
 
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
   return (
     <AlchemyAuthSessionProvider>
       <SafeAreaProvider>
+        <StatusBar style="light" />
         <Stack
           screenOptions={{
             headerShown: false,
           }}
         >
+          <Stack.Screen name="sign-in" />
           <Stack.Screen
             name="otp-modal"
             options={{
@@ -66,6 +60,8 @@ function RootLayoutNav() {
                 Platform.OS === "android" ? "slide_from_bottom" : "default",
             }}
           />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
         </Stack>
       </SafeAreaProvider>
     </AlchemyAuthSessionProvider>
