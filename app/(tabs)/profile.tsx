@@ -8,6 +8,8 @@ import {
   Switch,
   ScrollView,
   Dimensions,
+  Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -18,6 +20,8 @@ import {
   Card,
 } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
+import { useAlchemyAuthSession } from "@/context/AlchemyAuthSessionProvider";
+import { QUERIES } from "@/backend/queries";
 
 interface BotSettings {
   likePosts: boolean;
@@ -101,11 +105,48 @@ const SettingItem = ({
 
 export default function ProfileScreen() {
   const [systemPrompt, setSystemPrompt] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useAlchemyAuthSession();
   const [settings, setSettings] = useState<BotSettings>({
     likePosts: false,
     followOthers: false,
     generateImages: false,
   });
+
+  const handleCreateBot = async () => {
+    if (!user?.address || !systemPrompt.trim()) {
+      setError("Please enter a system prompt");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await QUERIES.bot.create(
+        user.address,
+        systemPrompt.trim()
+      );
+
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
+      // Optionally generate first post
+      if (result.data?.id) {
+        await QUERIES.bot.generateFirstPost(result.data.id);
+      }
+
+      // Could add success message or other feedback here
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create bot");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const toggleSetting = (setting: keyof BotSettings) => {
     setSettings((prev) => ({
@@ -135,7 +176,32 @@ export default function ProfileScreen() {
             value={systemPrompt}
             onChangeText={setSystemPrompt}
             cursorColor={colors.primary.main}
+            editable={!isLoading}
           />
+          <Pressable
+            onPress={handleCreateBot}
+            disabled={isLoading || !systemPrompt.trim()}
+          >
+            {({ pressed }) => (
+              <View
+                style={[
+                  styles.submitButton,
+                  {
+                    opacity:
+                      pressed || isLoading || !systemPrompt.trim() ? 0.5 : 1,
+                    transform: [{ scale: pressed ? 0.98 : 1 }],
+                  },
+                ]}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color={colors.neutral.text.primary} />
+                ) : (
+                  <Text style={styles.submitButtonText}>Create Bot</Text>
+                )}
+              </View>
+            )}
+          </Pressable>
+          {error && <Text style={styles.errorText}>{error}</Text>}
         </Card>
 
         <Card style={styles.section}>
@@ -304,5 +370,25 @@ const styles = StyleSheet.create({
   settingLabel: {
     ...typography.body1,
     color: colors.neutral.text.primary,
+  },
+  submitButton: {
+    width: "100%",
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.primary.main,
+    marginTop: spacing.md,
+  },
+  submitButtonText: {
+    color: colors.neutral.text.primary,
+    ...typography.subtitle1,
+    fontWeight: "600",
+  },
+  errorText: {
+    color: colors.neutral.text.error,
+    marginTop: spacing.sm,
+    textAlign: "center",
+    ...typography.caption,
   },
 });
