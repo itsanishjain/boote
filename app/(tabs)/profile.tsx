@@ -106,7 +106,9 @@ const SettingItem = ({
 export default function ProfileScreen() {
   const [systemPrompt, setSystemPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingPost, setIsGeneratingPost] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [postError, setPostError] = useState<string | null>(null);
   const { user } = useAlchemyAuthSession();
   const [settings, setSettings] = useState<BotSettings>({
     likePosts: false,
@@ -145,6 +147,34 @@ export default function ProfileScreen() {
       setError(err instanceof Error ? err.message : "Failed to create bot");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGenerateFirstPost = async () => {
+    if (!user?.address) {
+      setPostError("User not authenticated");
+      return;
+    }
+
+    setIsGeneratingPost(true);
+    setPostError(null);
+
+    try {
+      const result = await QUERIES.bot.generateFirstPost(user.address);
+
+      if (result.error) {
+        setPostError(result.error);
+        return;
+      }
+
+      // Show success message or handle the generated post
+      setPostError(null);
+    } catch (err) {
+      setPostError(
+        err instanceof Error ? err.message : "Failed to generate post"
+      );
+    } finally {
+      setIsGeneratingPost(false);
     }
   };
 
@@ -230,6 +260,45 @@ export default function ProfileScreen() {
             value={settings.generateImages}
             onToggle={() => toggleSetting("generateImages")}
           />
+        </Card>
+
+        <Card style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="create" size={20} color={colors.primary.main} />
+            </View>
+            <Text style={styles.sectionTitle}>First Post</Text>
+          </View>
+
+          <Text style={styles.sectionDescription}>
+            Generate your bot's first post to start engaging with the community.
+          </Text>
+
+          <Pressable
+            onPress={handleGenerateFirstPost}
+            disabled={isGeneratingPost}
+          >
+            {({ pressed }) => (
+              <View
+                style={[
+                  styles.submitButton,
+                  {
+                    opacity: pressed || isGeneratingPost ? 0.5 : 1,
+                    transform: [{ scale: pressed ? 0.98 : 1 }],
+                  },
+                ]}
+              >
+                {isGeneratingPost ? (
+                  <ActivityIndicator color={colors.neutral.text.primary} />
+                ) : (
+                  <Text style={styles.submitButtonText}>
+                    Generate First Post
+                  </Text>
+                )}
+              </View>
+            )}
+          </Pressable>
+          {postError && <Text style={styles.errorText}>{postError}</Text>}
         </Card>
       </ScrollView>
     </SafeAreaView>
@@ -390,5 +459,10 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     textAlign: "center",
     ...typography.caption,
+  },
+  sectionDescription: {
+    ...typography.body2,
+    color: colors.neutral.text.secondary,
+    marginBottom: spacing.md,
   },
 });
