@@ -3,119 +3,137 @@ import { View, Text, Pressable } from "react-native";
 
 // Color Palette
 const colors = {
-  // Primary colors
+  // Primary colors - Modern violet as primary
   primary: {
-    main: "#4A6741", // Hampton green - sophisticated, muted green
-    light: "#728468", // Lighter sage green
-    dark: "#2C3E28", // Deep forest green
+    main: "#A177FF", // Bright violet - eye-catching but not harsh
+    light: "#BFA3FF", // Lighter violet for hover states
+    dark: "#7747FF", // Deep violet for active states
   },
-  // Secondary colors
+  // Secondary colors - Teal accents
   secondary: {
-    main: "#1B3D6D", // Deep navy blue - complementary to Hampton green
-    light: "#4B6A9B",
-    dark: "#0E2444",
+    main: "#4ECDC4", // Vibrant teal
+    light: "#61E4DC",
+    dark: "#3BA89F",
   },
   // Status colors
   status: {
-    success: "#4A6741", // Using Hampton green for success
-    warning: "#FFB347", // Warmer, more playful orange
-    error: "#FF6B6B", // Softer, more playful red
-    info: "#4B6A9B", // Muted blue
+    success: "#00B894", // Minty green
+    warning: "#FFB156", // Soft orange
+    error: "#FF7675", // Coral red
+    info: "#74B9FF", // Electric blue
   },
-  // Neutral colors with green tints
+  // Dark mode specific neutrals
   neutral: {
-    white: "#FFFFFF",
-    background: "#F0F7F0", // Light, fresh green background
-    gray100: "#F5F8F5", // Subtle green tint
-    gray200: "#EBF1EB",
-    gray300: "#DFE5DF",
-    gray400: "#C2CAC2",
-    gray500: "#9EA499",
-    gray600: "#767D72",
-    gray700: "#5C625A",
-    gray800: "#424940",
-    gray900: "#2A2E28",
-    black: "#1A1C19",
+    // Main background colors
+    background: {
+      primary: "#000000", // True black for OLED screens
+      secondary: "#121212", // Slightly lighter for cards
+      tertiary: "#1E1E1E", // For elevated surfaces
+    },
+    // Text and icon colors
+    text: {
+      primary: "#FFFFFF", // Pure white for primary text
+      secondary: "rgba(255, 255, 255, 0.7)", // 70% white for secondary text
+      disabled: "rgba(255, 255, 255, 0.38)", // 38% white for disabled state
+    },
+    // Grayscale for various UI elements
+    gray100: "#2C2C2C",
+    gray200: "#383838",
+    gray300: "#404040",
+    gray400: "#585858",
+    gray500: "#717171",
+    gray600: "#8F8F8F",
+    gray700: "#A3A3A3",
+    gray800: "#CFCFCF",
+    gray900: "#E8E8E8",
   },
 };
 
-// Typography
+// Typography - Using SF Pro inspired metrics
 const typography = {
+  // Display typography
+  display: {
+    fontSize: 40,
+    fontWeight: "700" as const,
+    lineHeight: 48,
+    letterSpacing: -0.4,
+  },
+  // Headers
   h1: {
     fontSize: 32,
     fontWeight: "700" as const,
     lineHeight: 40,
+    letterSpacing: -0.3,
   },
   h2: {
     fontSize: 24,
-    fontWeight: "700" as const,
+    fontWeight: "600" as const,
     lineHeight: 32,
+    letterSpacing: -0.2,
   },
   h3: {
     fontSize: 20,
     fontWeight: "600" as const,
     lineHeight: 28,
+    letterSpacing: -0.1,
   },
+  // Body text
   body1: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "400" as const,
     lineHeight: 24,
+    letterSpacing: -0.24,
   },
   body2: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "400" as const,
-    lineHeight: 20,
+    lineHeight: 22,
+    letterSpacing: -0.24,
   },
+  // Supporting text
   caption: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "400" as const,
-    lineHeight: 16,
+    lineHeight: 18,
+    letterSpacing: -0.08,
   },
 };
 
-// Spacing
+// Spacing - Using 8-point grid system
 const spacing = {
-  xs: 4,
-  sm: 8,
+  xxs: 4,
+  xs: 8,
+  sm: 12,
   md: 16,
   lg: 24,
   xl: 32,
   xxl: 48,
+  xxxl: 64,
 };
 
-// Border Radius
+// Border Radius - Following Apple's varying radius approach
 const borderRadius = {
-  xs: 4,
-  sm: 6,
-  md: 8,
-  lg: 12,
-  xl: 16,
+  xs: 6,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 22,
   round: 9999,
 };
 
-// Shadow
+// Shadows for dark mode - More subtle than light mode
 const shadow = {
   sm: {
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.18,
-    shadowRadius: 1.0,
-    elevation: 1,
-  },
-  md: {
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 3,
     elevation: 3,
   },
-  lg: {
+  md: {
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -123,12 +141,21 @@ const shadow = {
     },
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
-    elevation: 5,
+    elevation: 6,
+  },
+  lg: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
   },
 };
 
-// Base Components
-
+// Modern Button Component
 const Button = ({
   variant = "filled",
   size = "md",
@@ -149,19 +176,19 @@ const Button = ({
           backgroundColor: disabled
             ? colors.neutral.gray300
             : colors.primary.main,
-          color: colors.neutral.white,
+          color: colors.neutral.text.primary,
         };
       case "outlined":
         return {
           backgroundColor: "transparent",
           borderWidth: 1,
           borderColor: disabled ? colors.neutral.gray300 : colors.primary.main,
-          color: disabled ? colors.neutral.gray300 : colors.primary.main,
+          color: disabled ? colors.neutral.text.disabled : colors.primary.main,
         };
       case "text":
         return {
           backgroundColor: "transparent",
-          color: disabled ? colors.neutral.gray300 : colors.primary.main,
+          color: disabled ? colors.neutral.text.disabled : colors.primary.main,
         };
       default:
         return {};
@@ -173,19 +200,19 @@ const Button = ({
       case "sm":
         return {
           paddingHorizontal: spacing.sm,
-          paddingVertical: spacing.xs,
+          paddingVertical: spacing.xxs,
           ...typography.body2,
         };
       case "md":
         return {
           paddingHorizontal: spacing.md,
-          paddingVertical: spacing.sm,
+          paddingVertical: spacing.xs,
           ...typography.body1,
         };
       case "lg":
         return {
           paddingHorizontal: spacing.lg,
-          paddingVertical: spacing.md,
+          paddingVertical: spacing.sm,
           ...typography.h3,
         };
       default:
@@ -212,20 +239,23 @@ const Button = ({
   );
 };
 
-// Card component for room/task displays
+// Card Component with dark mode styling
 const Card = ({
   children,
   style,
+  elevation = "md",
 }: {
   children: React.ReactNode;
-  style: any;
+  style?: any;
+  elevation?: "sm" | "md" | "lg";
 }) => (
   <View
     style={[
       {
-        backgroundColor: colors.neutral.white,
-        borderRadius: borderRadius.sm,
+        backgroundColor: colors.neutral.background.secondary,
+        borderRadius: borderRadius.lg,
         padding: spacing.md,
+        ...shadow[elevation],
       },
       style,
     ]}
@@ -234,41 +264,4 @@ const Card = ({
   </View>
 );
 
-// Progress indicator for tasks
-const ProgressBar = ({ progress, style }: { progress: number; style: any }) => (
-  <View
-    style={[
-      {
-        height: 8,
-        backgroundColor: colors.neutral.gray200,
-        borderRadius: borderRadius.round,
-        overflow: "hidden",
-      },
-      style,
-    ]}
-  >
-    <View
-      style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        backgroundColor: colors.primary.main,
-        width: `${Math.min(Math.max(progress, 0), 100)}%`,
-        borderRadius: borderRadius.round,
-      }}
-    />
-  </View>
-);
-
-export {
-  colors,
-  typography,
-  spacing,
-  borderRadius,
-  shadow,
-  Button,
-  Card,
-  ProgressBar,
-};
+export { colors, typography, spacing, borderRadius, shadow, Button, Card };

@@ -1,6 +1,6 @@
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors, typography, spacing, commonStyles } from "@/constants/theme";
+import { colors, typography, spacing } from "@/constants/theme";
 import { useAlchemyAuthSession } from "@/context/AlchemyAuthSessionProvider";
 import { BotCard } from "@/components/bot-card";
 
@@ -29,7 +29,9 @@ export default function HomeScreen() {
   if (!user) return null;
 
   return (
-    <SafeAreaView style={commonStyles.safeArea}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.neutral.background.primary }}
+    >
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.greeting}>Welcome back,</Text>
@@ -64,25 +66,25 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.neutral.background.primary,
   },
   header: {
     padding: spacing.lg,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.neutral.background.primary,
   },
   greeting: {
     ...typography.body2,
-    color: colors.primary,
+    color: colors.neutral.text.secondary,
   },
   userEmail: {
     ...typography.h2,
-    color: colors.onSurface,
+    color: colors.neutral.text.primary,
     marginTop: spacing.xs,
   },
   accountInfo: {
     marginTop: spacing.md,
     padding: spacing.md,
-    backgroundColor: colors.background,
+    backgroundColor: colors.neutral.background.secondary,
     borderRadius: 8,
   },
   accountLabel: {
@@ -91,18 +93,18 @@ const styles = StyleSheet.create({
   },
   accountAddress: {
     ...typography.body2,
-    color: colors.neutral.white,
+    color: colors.neutral.text.primary,
   },
   section: {
     padding: spacing.lg,
   },
   sectionTitle: {
     ...typography.h2,
-    color: colors.neutral.white,
+    color: colors.neutral.text.primary,
   },
   sectionSubtitle: {
     ...typography.body2,
-    color: colors.neutral.white,
+    color: colors.neutral.text.secondary,
     marginTop: spacing.xs,
   },
   botList: {
