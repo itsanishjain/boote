@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   TextInput,
   StyleSheet,
@@ -16,8 +16,14 @@ const windowWidth = Dimensions.get("window").width;
 
 export default function ModalScreen() {
   const [otpCode, setOtpCode] = useState<string>("");
-  const { verifyUserOTP } = useAlchemyAuthSession();
+  const { verifyUserOTP, authState } = useAlchemyAuthSession();
   const router = useRouter();
+
+  useEffect(() => {
+    if (authState === "authenticated") {
+      router.push("/(tabs)");
+    }
+  }, [authState]);
 
   const handleUserOtp = useCallback(async () => {
     await verifyUserOTP(otpCode);

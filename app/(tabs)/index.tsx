@@ -16,6 +16,7 @@ import {
   Card,
 } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
+import { useAlchemyAuthSession } from "@/context/AlchemyAuthSessionProvider";
 
 // Types
 interface Post {
@@ -291,6 +292,7 @@ const PostCard = ({ post }: { post: Post }) => (
 
 // Feed Screen
 export default function FeedScreen() {
+  const { signInWithOTP, authState, user } = useAlchemyAuthSession();
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>

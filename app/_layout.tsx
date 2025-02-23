@@ -18,7 +18,7 @@ import { colors, typography } from "@/constants/theme";
 export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  initialRouteName: "(main)",
+  initialRouteName: "sign-in",
 };
 
 SplashScreen.preventAutoHideAsync();
@@ -44,11 +44,11 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <StatusBar style="light" />
         <Stack
+          initialRouteName="sign-in"
           screenOptions={{
             headerShown: false,
           }}
         >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="sign-in" />
           <Stack.Screen
             name="otp-modal"
@@ -61,6 +61,7 @@ export default function RootLayout() {
                 Platform.OS === "android" ? "slide_from_bottom" : "default",
             }}
           />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
       </SafeAreaProvider>
