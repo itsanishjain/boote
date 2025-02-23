@@ -11,9 +11,12 @@ import {
   Dimensions,
   TextInput,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, typography, spacing, borderRadius } from "@/constants/theme";
+import { QUERIES } from "../backend/queries";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -22,15 +25,28 @@ export default function SignIn() {
   const router = useRouter();
   const { top, bottom } = useSafeAreaInsets();
   const { signInWithOTP, authState, user } = useAlchemyAuthSession();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onSignIn = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
     try {
-      await signInWithOTP(email);
-    } catch (e) {
-      console.error(
-        "Unable to send OTP to user. Ensure your credentials are properly set: ",
-        e
-      );
+      const result = await QUERIES.user.create(email);
+
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
+      if (result.data) {
+        router.replace("/(tabs)");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to sign in");
+    } finally {
+      setIsLoading(false);
     }
   }, [email]);
 
@@ -47,41 +63,55 @@ export default function SignIn() {
   const signInDisabled = email.length < 1;
 
   return (
-    <View style={containerStyles({ top, bottom })}>
-      <View style={styles.formContainer}>
-        <Text style={styles.titleText}>
-          {`Welcome! \nEnter Your Email to Sign In.`}
-        </Text>
-        <View style={styles.textInputContainer}>
-          <TextInput
-            style={styles.textInput}
-            value={email}
-            onChangeText={(val) => setEmail(val.toLowerCase())}
-            placeholder="john@doe.com"
-            placeholderTextColor={colors.neutral.text.secondary}
-          />
-          <Pressable onPress={onSignIn} disabled={signInDisabled}>
-            {({ pressed }) => (
-              <View
-                style={[
-                  styles.signInButton,
-                  {
-                    opacity: pressed || signInDisabled ? 0.5 : 1,
-                    transform: [
-                      {
-                        scale: pressed ? 0.98 : 1,
-                      },
-                    ],
-                  },
-                ]}
-              >
-                <Text style={[styles.signInText]}>Sign In</Text>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1, justifyContent: "center", padding: 16 }}>
+        {isLoading ? (
+          <ActivityIndicator size="large" />
+        ) : (
+          <View style={containerStyles({ top, bottom })}>
+            <View style={styles.formContainer}>
+              <Text style={styles.titleText}>
+                {`Welcome! \nEnter Your Email to Sign In.`}
+              </Text>
+              <View style={styles.textInputContainer}>
+                <TextInput
+                  style={styles.textInput}
+                  value={email}
+                  onChangeText={(val) => setEmail(val.toLowerCase())}
+                  placeholder="john@doe.com"
+                  placeholderTextColor={colors.neutral.text.secondary}
+                />
+                <Pressable onPress={onSignIn} disabled={signInDisabled}>
+                  {({ pressed }) => (
+                    <View
+                      style={[
+                        styles.signInButton,
+                        {
+                          opacity: pressed || signInDisabled ? 0.5 : 1,
+                          transform: [
+                            {
+                              scale: pressed ? 0.98 : 1,
+                            },
+                          ],
+                        },
+                      ]}
+                    >
+                      <Text style={[styles.signInText]}>Sign In</Text>
+                    </View>
+                  )}
+                </Pressable>
               </View>
-            )}
-          </Pressable>
-        </View>
+            </View>
+          </View>
+        )}
+
+        {error && (
+          <Text style={{ color: "red", textAlign: "center", marginTop: 16 }}>
+            {error}
+          </Text>
+        )}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
