@@ -70,7 +70,7 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: colors.neutral.white,
+          backgroundColor: colors.neutral.background.primary,
           borderTopWidth: 1,
           borderTopColor: colors.neutral.gray300,
           height: 60,

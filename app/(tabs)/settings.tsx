@@ -19,8 +19,6 @@ import { Platform } from "react-native";
 import { API_URL } from "@/constants";
 import { Storage } from "expo-sqlite/kv-store";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { commonStyles } from "@/constants/theme";
-import { SettingsItem } from "@/components/settings-item";
 
 type SettingItemProps = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -77,7 +75,7 @@ const SettingItem = ({
           false: colors.neutral.gray300,
           true: colors.primary.main,
         }}
-        thumbColor={colors.neutral.white}
+        thumbColor={colors.neutral.background.secondary}
       />
     )}
     {showChevron && !switchValue && (
@@ -209,25 +207,27 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={commonStyles.safeArea}>
-      <ScrollView>
-        <SettingsItem
-          title="Edit Bot"
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colors.neutral.background.primary }}
+    >
+      <ScrollView style={styles.container}>
+        <SettingItem
           icon="pencil"
+          label="Edit Bot"
           onPress={() => {
             /* Navigate to bot editing */
           }}
         />
-        <SettingsItem
-          title="Appearance"
+        <SettingItem
           icon="color-palette"
+          label="Appearance"
           onPress={() => {
             /* Open appearance settings */
           }}
         />
-        <SettingsItem
-          title="Notifications"
+        <SettingItem
           icon="notifications"
+          label="Notifications"
           onPress={() => {
             /* Open notification settings */
           }}
@@ -240,25 +240,25 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral.background,
+    backgroundColor: colors.neutral.background.primary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.neutral.background,
+    backgroundColor: colors.neutral.background.primary,
   },
   header: {
     paddingTop: spacing.xxl,
     paddingHorizontal: spacing.md,
     paddingBottom: spacing.md,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.neutral.background.secondary,
   },
   title: {
-    color: colors.neutral.gray900,
+    color: colors.neutral.text.primary,
   },
   section: {
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.neutral.background.secondary,
     marginTop: spacing.md,
     borderTopWidth: 1,
     borderBottomWidth: 1,
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.neutral.background.secondary,
     borderBottomWidth: 1,
     borderBottomColor: colors.neutral.gray200,
   },
@@ -287,21 +287,21 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     flex: 1,
-    color: colors.neutral.gray900,
+    color: colors.neutral.text.primary,
   },
   destructiveText: {
     color: colors.status.error,
   },
   settingValue: {
     marginRight: spacing.sm,
-    color: colors.neutral.gray600,
+    color: colors.neutral.text.secondary,
   },
   chevron: {
     marginLeft: spacing.sm,
   },
   version: {
     textAlign: "center",
-    color: colors.neutral.gray500,
+    color: colors.neutral.text.secondary,
     marginVertical: spacing.xl,
   },
 });
