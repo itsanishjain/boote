@@ -197,10 +197,6 @@ export const Card = StyleSheet.create({
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.grey800,
-    // Add pressed state styles
-    pressable: {
-      opacity: 0.7,
-    },
   },
 });
 
