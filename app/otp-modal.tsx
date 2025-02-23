@@ -36,12 +36,14 @@ export default function ModalScreen() {
     try {
       const result = await QUERIES.user.create(walletAddress);
 
+      console.log("result", result);
+
       if (result.error) {
         setError(result.error);
         return;
       }
 
-      if (result.data) {
+      if (result) {
         // Successfully created user, navigate to tabs
         router.push("/(tabs)");
       }
