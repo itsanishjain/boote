@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-import { StyleSheet, Dimensions } from "react-native";
+import { Dimensions } from "react-native";
 import Animated, {
   useAnimatedStyle,
   withTiming,
   withSequence,
   withSpring,
-  withDelay,
   runOnJS,
   useSharedValue,
   interpolate,

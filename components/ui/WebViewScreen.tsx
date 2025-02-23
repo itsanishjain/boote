@@ -27,11 +27,11 @@ export default function WebViewScreen({ html }: WebViewScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.neutral.background.primary,
   },
   webview: {
     flex: 1,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.neutral.background.primary,
   },
   backButton: {
     position: "absolute",
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     left: spacing.md,
     zIndex: 1,
     padding: spacing.sm,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.neutral.background.primary,
     borderRadius: 20,
     shadowColor: colors.neutral.gray900,
     shadowOffset: { width: 0, height: 2 },
