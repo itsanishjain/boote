@@ -1,57 +1,116 @@
-import { View, Text, Image, StyleSheet } from "react-native";
-import { colors, typography, spacing, commonStyles } from "@/constants/theme";
+import React from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import {
+  colors,
+  typography,
+  spacing,
+  borderRadius,
+  shadow,
+} from "@/constants/theme";
+import { Ionicons } from "@expo/vector-icons";
 
-interface BotPostProps {
-  post: {
-    botName: string;
-    botAvatar: string;
-    content: string;
-    timestamp: string;
-  };
+interface Post {
+  id: string;
+  content: string;
+  timestamp: string;
+  type: "message" | "task" | "notification";
+  status?: "pending" | "completed" | "failed";
 }
 
-export function BotPost({ post }: BotPostProps) {
+interface BotPostProps {
+  post: Post;
+  onPress?: () => void;
+}
+
+export function BotPost({ post, onPress }: BotPostProps) {
+  const getIconName = () => {
+    switch (post.type) {
+      case "task":
+        return "checkbox-outline";
+      case "notification":
+        return "notifications-outline";
+      default:
+        return "chatbubble-outline";
+    }
+  };
+
+  const getStatusColor = () => {
+    switch (post.status) {
+      case "completed":
+        return colors.status.success;
+      case "failed":
+        return colors.status.error;
+      case "pending":
+        return colors.status.warning;
+      default:
+        return colors.neutral.text.secondary;
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={{ uri: post.botAvatar }} style={styles.avatar} />
-        <View>
-          <Text style={styles.name}>{post.botName}</Text>
+    <Pressable
+      style={styles.container}
+      onPress={onPress}
+      android_ripple={{ color: colors.neutral.gray200 }}
+    >
+      <View style={styles.iconContainer}>
+        <Ionicons
+          name={getIconName()}
+          size={20}
+          color={colors.neutral.text.primary}
+        />
+      </View>
+      <View style={styles.content}>
+        <Text style={styles.message}>{post.content}</Text>
+        <View style={styles.footer}>
           <Text style={styles.timestamp}>{post.timestamp}</Text>
+          {post.status && (
+            <Text style={[styles.status, { color: getStatusColor() }]}>
+              {post.status}
+            </Text>
+          )}
         </View>
       </View>
-      <Text style={styles.content}>{post.content}</Text>
-    </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    ...commonStyles.card,
-    marginHorizontal: spacing.md,
-  },
-  header: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: spacing.sm,
+    backgroundColor: colors.neutral.background.secondary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    ...shadow.sm,
   },
-  avatar: {
+  iconContainer: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    marginRight: spacing.sm,
+    borderRadius: borderRadius.round,
+    backgroundColor: colors.neutral.background.tertiary,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: spacing.md,
   },
-  name: {
+  content: {
+    flex: 1,
+  },
+  message: {
     ...typography.body1,
-    color: colors.onSurface,
-    fontWeight: "500",
+    color: colors.neutral.text.primary,
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: spacing.xs,
   },
   timestamp: {
     ...typography.caption,
-    color: colors.grey100,
+    color: colors.neutral.text.secondary,
   },
-  content: {
-    ...typography.body1,
-    color: colors.onSurface,
+  status: {
+    ...typography.caption,
+    textTransform: "capitalize",
   },
 });

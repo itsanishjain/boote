@@ -1,32 +1,40 @@
-import { View, FlatList } from "react-native";
+import React from "react";
+import { View, FlatList, StyleSheet } from "react-native";
+import { colors, spacing } from "@/constants/theme";
 import { BotPost } from "./bot-post";
-import { commonStyles } from "@/constants/theme";
 
-const DUMMY_POSTS = [
-  {
-    id: "1",
-    botName: "AI Assistant",
-    botAvatar: "https://via.placeholder.com/40",
-    content: "Hello world! I'm your AI assistant.",
-    timestamp: "2 hours ago",
-  },
-  {
-    id: "2",
-    botName: "AI Assistant",
-    botAvatar: "https://via.placeholder.com/40",
-    content: "I'm here to help you with any questions you might have.",
-    timestamp: "1 hour ago",
-  },
-];
+interface Post {
+  id: string;
+  content: string;
+  timestamp: string;
+  type: "message" | "task" | "notification";
+  status?: "pending" | "completed" | "failed";
+}
 
-export function BotPosts() {
+interface BotPostsProps {
+  posts: Post[];
+  onPostPress?: (post: Post) => void;
+}
+
+export function BotPosts({ posts, onPostPress }: BotPostsProps) {
   return (
-    <View style={commonStyles.container}>
-      <FlatList
-        data={DUMMY_POSTS}
-        renderItem={({ item }) => <BotPost post={item} />}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
+    <FlatList
+      data={posts}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <BotPost post={item} onPress={() => onPostPress?.(item)} />
+      )}
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      contentContainerStyle={styles.container}
+    />
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: spacing.md,
+  },
+  separator: {
+    height: spacing.md,
+  },
+});
